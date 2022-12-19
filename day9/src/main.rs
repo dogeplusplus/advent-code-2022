@@ -4,7 +4,7 @@ use std::io::{prelude::*, BufReader};
 use std::ops::{Add, Mul};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-struct Tuple (i32, i32);
+struct Tuple(i32, i32);
 
 fn tail_moves(head: Tuple, tail: Tuple) -> bool {
     if (head.0 - tail.0).abs() > 1 || (head.1 - tail.1).abs() > 1 {
@@ -35,7 +35,10 @@ fn main_a() {
     let input_path = "input.txt";
     let file = File::open(input_path).expect("no such file");
     let buf = BufReader::new(file);
-    let lines: Vec<String> = buf.lines().map(|l| l.expect("couldnt parse line")).collect();
+    let lines: Vec<String> = buf
+        .lines()
+        .map(|l| l.expect("couldnt parse line"))
+        .collect();
 
     let mut head = Tuple(0, 0);
     let mut tail = Tuple(0, 0);
@@ -68,10 +71,13 @@ fn main_a() {
 }
 
 fn main() {
-    let input_path = "input_test_1.txt";
+    let input_path = "input.txt";
     let file = File::open(input_path).expect("no such file");
     let buf = BufReader::new(file);
-    let lines: Vec<String> = buf.lines().map(|l| l.expect("couldnt parse line")).collect();
+    let lines: Vec<String> = buf
+        .lines()
+        .map(|l| l.expect("couldnt parse line"))
+        .collect();
 
     let mut segments = vec![Tuple(0, 0); 10];
 
@@ -91,12 +97,12 @@ fn main() {
 
         for _ in 0..length {
             segments[0] = segments[0] + vector;
-            let direction = Tuple(segments[0].0 - segments[1].0, segments[0].1 - segments[1].1);
             for i in 1..segments.len() {
-                if tail_moves(segments[i-1], segments[i]) {
-                    segments[i] = segments[i] + direction;
-
-                } 
+                let diff_x = segments[i-1].1 - segments[i].1;
+                let diff_y = segments[i-1].0 - segments[i].0;
+                if diff_x.abs() > 1 || diff_y.abs() > 1 {
+                    segments[i] = segments[i] + Tuple(diff_y.signum(), diff_x.signum());
+                }
             }
             visited.insert(segments[9]);
         }
@@ -104,3 +110,4 @@ fn main() {
 
     println!("Tail visited: {:?}", visited.len());
 }
+
